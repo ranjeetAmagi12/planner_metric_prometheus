@@ -41,22 +41,22 @@ def register_collection_gauge():
     }
    
 def schedule_item_metrics(cursor, schedule_item, cp_and_ms, schedule_entry, collection , metrics):
-    schedule_items = cursor.query(schedule_item).all()
+    schedule_items = cursor.execute(schedule_item).all()
     for item in schedule_item:
         metrics['schedule_item_details'].labels(id=item.id, schedule_entry_id=item.schedule_entry_id, start_time=item.start_time, end_time=item.end_time, collection_id=item.collection_id, tenant_id=item.tenant_id, feed_id=item.feed_id, target_duration=item.target_duration, created_at=item.created_at, updated_at=item.updated_at).set(1)
        
 def cp_and_ms_metrics(cursor,schedule_item, cp_and_ms, schedule_entry, collection , metrics):
-    cp_and_mss = cursor.query(cp_and_ms).all()
+    cp_and_mss = cursor.execute(cp_and_ms).all()
     for entry in cp_and_mss:
         metrics['cp_and_ms_details'].labels(tenant_id=entry.tenant_id, cloudport_feed_id=entry.cloudport_feed_id, account_name=entry.account_name, platform_code=entry.platform_code).set(1)
       
 def schedule_entry_metrics(cursor,schedule_item, cp_and_ms, schedule_entry, collection, metrics):
-    schedule_entrys = cursor.query(schedule_entry).all()
+    schedule_entrys = cursor.execute(schedule_entry).all()
     for entry in schedule_entrys:
         metrics['schedule_entry_details'].labels(id=entry.id, start_date=entry.start_date, end_date=entry.end_date,target_duration=entry.target_duration,tenant_id=entry.tenant_id, feed_id=entry.feed_id, created_at=entry.created_at, updated_at=entry.updated_at).set(1)
       
 def collection_metrics(cursor, schedule_item, cp_and_ms, schedule_entry, collection, metrics):
-    collections = cursor.query(collection).all()
+    collections = cursor.execute(collection).all()
     for entry in collections:
         metrics['schedule_entry_details'].labels(id=entry.id, tenant_id=entry.tenant_id, feed_id=entry.feed_id, episode_target_duration=entry.episode_target_duration, collection_type=entry.collection_type, created_at=entry.created_at, updated_at=entry.updated_at).set(1)
     
