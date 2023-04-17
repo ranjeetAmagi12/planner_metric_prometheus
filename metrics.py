@@ -10,15 +10,6 @@ class dotdict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
-# def register_schedule_item_gauge():
-#     return {
-#         'schedule_item_details': Gauge('schedule_item', 'scheduled programs in the app', ['state']),
-#         # 'account_count': Gauge('account_count', 'amagi now account metrics', ['state']),
-#         # 'channel_count': Gauge('channel_count', 'amagi now channel metrics', ['state']),
-#         # 'ingest_count': Gauge('ingest_count', 'amagi now ingest metrics', ['state']),
-#         # 'delivery_count': Gauge('delivery_count', 'amagi now delivery metrics', ['state']),
-#         # 'intent_count': Gauge('intent_count', 'amagi now intent metrics', ['state'])
-#     }
 
 def register_schedule_item_gauge():
     return {
