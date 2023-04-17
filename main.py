@@ -1,7 +1,8 @@
-import schedule
+# import schedule
 import time
 from db import get_connection, load_classes
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import NoInspectionAvailable
 
 from metrics import (
     schedule_item_metrics,
@@ -26,12 +27,12 @@ from sqlalchemy.ext.automap import automap_base
 
 # generate_report()
 # schedule the cost report generation every 1 hour
-schedule.every(12).hours.do(generate_report)
+# schedule.every(12).hours.do(generate_report)
 
 Base = automap_base()
 app = FastAPI()
 
-# engine = get_connection()
+engine = get_connection()
 
 Base.prepare(autoload_with=engine)
 
@@ -49,7 +50,8 @@ def read_root() -> Response:
 
     metrics = register_schedule_item_gauge()
     conn = get_connection()
-    cursor = get_connection_cursor(conn)
+    cursor = conn.cursor()
+    # cursor = get_connection_cursor(conn)
 
     schedule_item_metrics(cursor, schedule_item, cp_and_ms, schedule_entry, collection , metrics)
     conn.close()
@@ -63,7 +65,8 @@ def read_root() -> Response:
     
     metrics = register_cp_and_ms_gauge()
     conn = get_connection()
-    cursor = get_connection_cursor(conn)
+    # cursor = get_connection_cursor(conn)
+    cursor = conn.cursor()
 
     cp_and_ms_metrics(cursor,schedule_item, cp_and_ms, schedule_entry, collection , metrics)
     conn.close()
@@ -77,7 +80,8 @@ def read_root() -> Response:
     
     metrics = register_schedule_entry_gauge()
     conn = get_connection()
-    cursor = get_connection_cursor(conn)
+    # cursor = get_connection_cursor(conn)
+    cursor = conn.cursor()
 
     schedule_entry_metrics(cursor,schedule_item, cp_and_ms, schedule_entry, collection , metrics)
     conn.close()
@@ -91,8 +95,9 @@ def read_root() -> Response:
     
     metrics = register_collection_gauge()
     conn = get_connection()
-    cursor = get_connection_cursor(conn)
-
+    # cursor = get_connection_cursor(conn)
+    cursor = conn.cursor()
+    
     collection_metrics(cursor, schedule_item, cp_and_ms, schedule_entry, collection, metrics)
     conn.close()
     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)

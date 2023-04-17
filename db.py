@@ -7,6 +7,8 @@ import psycopg2
 
 def get_connection():
     #establishing the connection
+    # conn_string = "os.getenv('Postgres_HOST', 'localhost') os.getenv('Postgres_User', 'newuser') os.getenv('password', 'newuser') os.getenv('database', 'postgres') os.getenv('port', 5432)"
+    # conn = psycopg2.connect(conn_string)
     conn = psycopg2.connect(
         database="postgres",
         user='newuser',
