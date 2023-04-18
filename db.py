@@ -8,11 +8,11 @@ import psycopg2
 def get_connection():
     #establishing the connection
     conn = psycopg2.connect(
-        database='postgres',
-        user='newuser',
-        password='newuser',
-        host='localhost',
-        port=5432
+        database=os.getenv('DATABASE_NAME'),
+        user=os.getenv('DATABASE_USER'),
+        password=os.getenv('DATABASE_PASSWORD'),
+        host=os.getenv('DATABASE_HOST'),
+        port=os.getenv('DATABASE_PASSWORD')
     )
     return conn
 
