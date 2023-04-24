@@ -12,7 +12,7 @@ def get_connection():
         user=os.getenv('DATABASE_USER'),
         password=os.getenv('DATABASE_PASSWORD'),
         host=os.getenv('DATABASE_HOST'),
-        port=os.getenv('DATABASE_PASSWORD')
+        port=os.getenv('DATABASE_PORT')
     )
     return conn
 
