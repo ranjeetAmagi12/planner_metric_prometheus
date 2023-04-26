@@ -5,24 +5,25 @@ from db import get_connection
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import NoInspectionAvailable
 import uvicorn
+from datetime import date
 
 from metrics import (
-    collection_element_metrics,
-    collection_pin_metrics,
-    metadata_metrics,
-    register_collection_element_gauge,
-    register_collection_pin_gauge,
-    register_metadata_gauge,
-    register_schedule_entry_repeat_gauge,
-    schedule_entry_repeat_metrics,
+    # collection_element_metrics,
+    # collection_pin_metrics,
+    # metadata_metrics,
+    # register_collection_element_gauge,
+    # register_collection_pin_gauge,
+    # register_metadata_gauge,
+    # register_schedule_entry_repeat_gauge,
+    # schedule_entry_repeat_metrics,
     schedule_item_metrics,
     cp_and_ms_metrics,
-    schedule_entry_metrics,
-    collection_metrics,
+    # schedule_entry_metrics,
+    # collection_metrics,
     register_schedule_item_gauge,
     register_cp_and_ms_gauge,
-    register_schedule_entry_gauge,
-    register_collection_gauge
+    # register_schedule_entry_gauge,
+    # register_collection_gauge
 )
 
 import prometheus_client
@@ -45,7 +46,7 @@ import psycopg2.extras
 def health():
     return {"status": "healthy"}
 
-@app.get("/schedule_item/metrics")
+@app.get("/planner_schedule_details/metrics")
 def read_root() -> Response:
     # reset the registry (or set it to an empty registry) of the 
     # Prometheus Python client library..Now, it will start with own registry
@@ -62,7 +63,7 @@ def read_root() -> Response:
     conn.close()
     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-@app.get("/cp_and_ms/metrics")
+@app.get("/planner_channel_details/metrics")
 def read_root() -> Response:
     collectors = list(REGISTRY._collector_to_names.keys())
     for collector in collectors:
@@ -77,91 +78,91 @@ def read_root() -> Response:
     conn.close()
     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-@app.get("/schedule_entry/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/schedule_entry/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_schedule_entry_gauge()
-    conn = get_connection()
-    # cursor = get_connection_cursor(conn)
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     metrics = register_schedule_entry_gauge()
+#     conn = get_connection()
+#     # cursor = get_connection_cursor(conn)
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
 
-    schedule_entry_metrics(cursor , metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     schedule_entry_metrics(cursor , metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-@app.get("/collection/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/collection/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_collection_gauge()
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    collection_metrics(cursor, metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     metrics = register_collection_gauge()
+#     conn = get_connection()
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     collection_metrics(cursor, metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
-@app.get("/collection_element/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/collection_element/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_collection_element_gauge()
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    collection_element_metrics(cursor, metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     metrics = register_collection_element_gauge()
+#     conn = get_connection()
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     collection_element_metrics(cursor, metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 
-@app.get("/collection_pin/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/collection_pin/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_collection_pin_gauge()
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    collection_pin_metrics(cursor, metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     metrics = register_collection_pin_gauge()
+#     conn = get_connection()
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     collection_pin_metrics(cursor, metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
-@app.get("/metadata/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/metadata/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_metadata_gauge()
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    metadata_metrics(cursor, metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     metrics = register_metadata_gauge()
+#     conn = get_connection()
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     metadata_metrics(cursor, metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 
-@app.get("/schedule_entry_repeat/metrics")
-def read_root() -> Response:
-    collectors = list(REGISTRY._collector_to_names.keys())
-    for collector in collectors:
-        REGISTRY.unregister(collector)
+# @app.get("/schedule_entry_repeat/metrics")
+# def read_root() -> Response:
+#     collectors = list(REGISTRY._collector_to_names.keys())
+#     for collector in collectors:
+#         REGISTRY.unregister(collector)
     
-    metrics = register_schedule_entry_repeat_gauge()
-    conn = get_connection()
-    cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-    schedule_entry_repeat_metrics(cursor, metrics)
-    conn.close()
-    return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
+#     metrics = register_schedule_entry_repeat_gauge()
+#     conn = get_connection()
+#     cursor = conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+#     schedule_entry_repeat_metrics(cursor, metrics)
+#     conn.close()
+#     return Response(prometheus_client.generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 if __name__ == '__main__':
