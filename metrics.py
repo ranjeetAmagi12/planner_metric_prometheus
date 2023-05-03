@@ -22,7 +22,7 @@ def register_cp_and_ms_gauge():
     }
 
 def schedule_item_metrics(cursor, metrics):
-    cursor.execute("SELECT S.start_time,S.runtime,C.name,C.account_name,S.feed_id,S.tenant_id FROM schedule_item S INNER JOIN cp_and_ms C ON C.cloudport_feed_id = S.feed_id WHERE start_time BETWEEN now() AND (date_trunc('day', now()) + interval '90 day') ORDER BY start_time")
+    cursor.execute("SELECT S.start_time,S.runtime,C.name,C.account_name,S.feed_id,S.tenant_id FROM schedule_item S INNER JOIN cp_and_ms C ON C.cloudport_feed_id = S.feed_id WHERE start_time BETWEEN now() AND (now() + interval '90 day') ORDER BY S.start_time")
     #cursor.execute("SELECT * FROM schedule_item ORDER BY id ASC LIMIT 100")
     schedule_items = cursor.fetchall()
     prevDay = None
