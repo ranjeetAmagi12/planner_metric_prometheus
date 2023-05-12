@@ -3,7 +3,6 @@ pydantic>=1.8.0,<2.0.0
 uvicorn>=0.15.0,<0.16.0
 prometheus-client
 SQLAlchemy
-mysqlclient
 schedule
 boto3
 requests
